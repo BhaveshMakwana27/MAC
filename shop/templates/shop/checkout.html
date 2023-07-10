@@ -1,0 +1,125 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %}checkout{% endblock %}
+
+{% block css %}
+    .scrollable {
+        overflow: auto;
+        max-height: 150px; /* Optional: Set a fixed height to limit the scrolling area */
+    }
+    .right-element {
+        float: right;
+        clear: right;
+    }
+{% endblock %}
+
+{% block body %} 
+ 
+<div class="container content">
+    <div>
+        <h4>Products In Your Cart with Quantity</h4>
+        <div id="itemList"class="scrollable">
+
+            <div  data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
+                
+            </div>
+        </div>
+        <div id="bill">
+            
+        </div>
+    </div>
+
+
+    <div class="mt-5 mb-3">
+        <h4>Enter Your Details Here...</h4>
+        <form method="post" action="/checkout/"> {% csrf_token %}
+            <input type="hidden" name="itemJson" id="itemJson">
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" name='name' id="name" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="phoneNo">PhoneNo</label>
+                    <input type="tel" class="form-control" id="phoneNo" name="phoneNo" required>
+                </div>
+            </div>
+            <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" class="form-control" id="address" name="address" placeholder="1234 Main St" required>
+            </div>
+            <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="city">City</label>
+                <input type="text" class="form-control" id="city" name="city" placeholder="City Name" required>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="state">State</label>
+                <input type="text" class="form-control" id="state" name="state" placeholder="State Name" required>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="zip">Pincode</label>
+                <input type="text" class="form-control" id="zip" name="zip" placeholder="pincode" required>
+            </div>
+            </div>
+            <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="checkout" required>
+                <label class="form-check-label" for="gridCheck">
+                Check me out
+                </label>
+            </div>
+            </div>
+            <button id='placeorder' type="submit" class="btn btn-primary">Place Order</button>
+        </form> 
+    </div>
+   
+
+
+{% endblock %}
+
+{% block js %}
+<script>
+        if (localStorage.getItem('cart')==null) {
+            var cart = {}
+        } else {
+            cart = JSON.parse(localStorage.getItem('cart'))
+        }
+        let itemList = document.getElementById('itemList')
+        var sum = 0
+        let finalAmount = 0
+        for (const item in cart) {
+            let id = cart[item][0]
+            let qty = cart[item][1]
+            let name = cart[item][2]
+            let price = cart[item][3]
+            sum+= qty
+            finalAmount+=(price*qty)
+            itemList.innerHTML=itemList.innerHTML + `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        ${name}
+                                                        <span class="badge badge-primary badge-pill">${qty}</span>
+                                                    </li>`
+        }
+
+        
+        let bill = `<nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">Final Bill : ${finalAmount}</li>
+                        </ol>
+                    </nav>`
+        $('#bill').append(bill)
+
+        document.getElementById('cart').innerHTML = sum
+        $('#itemJson').val(JSON.stringify(cart))
+            {% if thank %}
+                alert('Your order is submitted, Order id is {{id}}')
+                localStorage.clear()
+                document.location('/')
+            {% endif %}
+
+</script>
+{% endblock %}

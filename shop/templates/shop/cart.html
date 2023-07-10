@@ -1,0 +1,75 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %}checkout{% endblock %}
+
+{% block css %}
+
+    .right-element {
+        float: right;
+        clear: right;
+    }
+
+
+    .totalDesign{
+        background-color: rgb(220, 220, 220);
+        margin-top: 3px;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+   
+{% endblock %}
+
+{% block body %} 
+ 
+<div class="container content">
+    <div>
+        <h4>Products In Your Cart with Quantity</h4>
+        <div id="itemList">
+            
+        </div>
+    </div>
+    <div class="totalDesign">
+        <a id="checkout" href="/checkout" type="button" class="btn btn-success">Check out</a>
+        <div id="subtotal" class="float-right">
+    
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+        if (localStorage.getItem('cart')==null) {
+            var cart = {}
+        } else {
+            cart = JSON.parse(localStorage.getItem('cart'))
+        }
+        let itemList = document.getElementById('itemList')
+        var sum = 0
+        let subTotal = 0
+        for (const item in cart) {
+            let id = cart[item][0]
+            let qty = cart[item][1]
+            let name = cart[item][2]
+            let price = cart[item][3]
+            let productTotalPrice = price*qty
+            subTotal+=productTotalPrice
+            sum+= qty
+            itemList.innerHTML=itemList.innerHTML + `<div class="card mt-2 ">
+                                                        <div class="card-header">${name} <span class='right-element'>Price : ${price}</span></div>
+                                                        <div class="card-body">
+                                                            <span class='right-element'>Quantity : ${qty}</span>
+                                                            <span class="card-text right-element d-flex"> Total Price : ${productTotalPrice}</span>
+                                                            <a href="/productview/${id}" class="btn btn-primary">View Product</a>
+                                                        </div>
+                                                        </div>`
+
+        }
+
+        document.getElementById('cart').innerHTML = Object.keys(cart).length
+        document.getElementById('subtotal').innerText = 'Subtotal Price : '+  subTotal
+ 
+
+</script>
+{% endblock %}
