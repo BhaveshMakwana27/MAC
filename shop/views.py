@@ -20,8 +20,28 @@ def index(request):
 def about(request):
     return render(request,'shop/about.html')
 
+def searchMatch(query,item):
+    q = query.lower()
+    if q in item.desc.lower() or q in item.product_name.lower() or q in item.category.lower() or q in item.subcategory.lower():
+        return True
+    return False
+
 def search(request):
-    return render(request,'shop/search.html')
+    query = request.GET.get('search')
+    allProds = []
+    catProds = Product.objects.values('category','id')
+    cats = {item['category'] for item in catProds}
+    for cat in cats:
+        prodTemp = Product.objects.filter(category=cat)
+        prod = [item for item in prodTemp if searchMatch(query,item)]
+        n = len(prod)
+        nSlides = n//4 + ceil(n/4 - n//4)
+        if(len(prod)!=0):
+            allProds.append([prod,nSlides,range(1,nSlides)])
+    params = {'allProds':allProds}
+    if (len(allProds) == 0 or len(query)<1):
+        params={'msg':'Prease make sure to enter relevant query....'}
+    return render(request,'shop/search.html',params)
 
 def contactUs(request):
     if(request.method == 'POST'):
