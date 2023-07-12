@@ -13,17 +13,18 @@
 
     <div class="row">
         <div class="col-md-4">
-            <img src="/media/{{product.image}}" alt="" height="400px" width="400px">
-            
+            <img src="/media/{{product.image}}" alt="" height="300px" width="300px">
             
         </div>
         <div class="col-md-8">
-            <h2><b>{{product.product_name}}</b></h2>
-            <h5>Rs. {{product.price}}</h5>
+            <h2 id="namepr{{product.id}}"><b>{{product.product_name}}</b></h2>
+            <h5 id="pricepr{{product.id}}">Rs. {{product.price}}</h5>
             <p>{{product.desc}}</p>
             <div class="row">
-                <button class="btn btn-primary ml-3 mt-3" style="display: inline-block;">Buy Now</button>
-                <button class="btn btn-success ml-3 mt-3" style="display: inline-block;">Add To Cart</button>
+                <button id='buyNow' class="btn btn-primary ml-3 mt-3" style="display: inline-block;">Buy Now</button>
+                <span id="divpr{{product.id}}" class="divpr">
+                    <button id='pr{{product.id}}' class="btn btn-success ml-3 mt-3 cart" style="display: inline-block;">Add To Cart</button>
+                </span>
             </div>
         </div>
     </div>
@@ -33,5 +34,68 @@
 {% endblock %}
 
 {% block js %}
+<script>
+    var idStr = 'pr{{product.id}}'
+    var id = '{{product.id}}'
+    if (localStorage.getItem('cart')==null) {
+        var cart = {}
+    } else {
+        cart = JSON.parse(localStorage.getItem('cart'))
+        updateCart(cart)
+    }
+    $('#buyNow').on('click',function(){
+        if(cart[idStr] == null || cart[idStr] == undefined){
+            var qty = 1;
+            var name = document.getElementById('name'+idStr).firstElementChild.innerText
+            var price = document.getElementById('price'+idStr).innerText.slice(4,)
+            cart[idStr] = [id,qty,name,price];
+            updateCart(cart)
+        } 
+        window.location.href = '/cart'
+    })
+    
+    $('.divpr').on('click','button.cart',function(){
+        if (cart[idStr] == null || cart[idStr] == undefined) {
+            var qty = 1;
+            var name = document.getElementById('name'+idStr).firstElementChild.innerText
+            var price = document.getElementById('price'+idStr).innerText.slice(4,)
+            cart[idStr] = [id,qty,name,price];
+        }
+        updateCart(cart)
+    })
+
+    function updateCart(cart){
+        if (cart[idStr] != null || cart[idStr] != undefined) {
+                document.getElementById('divpr'+id).innerHTML = `<button id="minus${idStr}" class="btn btn-danger minus ml-3 mt-3 cart" style="display: inline-block;">-</button> 
+                <span id='val${idStr}' class="ml-3 align-middle mt-3 cart" style="display: inline-block;">${cart[idStr][1]}</span>
+                <button id="plus${idStr}" class="btn btn-success plus ml-3 mt-3 cart" style="display: inline-block;">+</button>`
+            
+        }
+        localStorage.setItem('cart',JSON.stringify(cart));
+        document.getElementById('cart').innerHTML = Object.keys(cart).length
+    }
+
+    // when minus and plus button is clicked
+  $('.divpr').on('click','button.minus',function(){
+    a = id
+    if(cart['pr'+a][1]>0){
+      cart['pr'+a][1] = cart['pr'+a][1]-1
+      if (cart['pr'+a][1]<=0) {
+        document.getElementById('divpr'+a).innerHTML = `<button id="pr${a}" class="btn btn-success cart ml-3 mt-3" style="display: inline-block;">Add to cart</button>`
+        delete cart['pr'+a]
+      }else{
+        document.getElementById('valpr'+a).innerHTML = cart['pr'+a][1]
+      }
+      updateCart(cart)
+    }
+  });
+  
+  $('.divpr').on('click','button.plus',function(){
+    a = id
+      cart['pr'+a][1] = cart['pr'+a][1]+1
+      document.getElementById('valpr'+a).innerHTML = cart['pr'+a][1]
+      updateCart(cart)
+  });
+</script>
 
 {% endblock %}

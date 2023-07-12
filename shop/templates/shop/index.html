@@ -115,8 +115,8 @@
     var cart = {}
   } else {
     cart = JSON.parse(localStorage.getItem('cart'))
-    updateCart(cart)
   }
+  updateCart(cart)
 
   // increament cart when add to cart btn is clicked
   $('.divpr').on('click','button.cart',function() {
@@ -135,11 +135,9 @@
   });
   
   // Popover to cart
-  updatePopover(cart)
   function updatePopover(cart){
     var popStr = ''
-    popStr = popStr+ `<h5>Your Cart</h5>
-                      <div class='my-2 mx-2'>`
+    popStr = popStr+ ` <div class='my-2 mx-2'>`
     var i = 1;
     for(let item in cart){
       popStr = popStr + `<br>${i}. `
@@ -153,6 +151,8 @@
                       </div>`
     
     document.getElementById('popcart').setAttribute('data-content',popStr)
+    document.getElementById('popcart').setAttribute('data-title','<h5>Your Cart</h5>')
+
     $('#popcart').popover('show')
   }
 
@@ -160,9 +160,9 @@
   // Update cart
   function updateCart(cart){
     for(var item in cart){
-      document.getElementById('div'+item).innerHTML = `<button id="minus${item}" class="btn btn-primary minus">-</button> 
+      document.getElementById('div'+item).innerHTML = `<button id="minus${item}" class="btn btn-danger minus">-</button> 
       <span id='val${item}'>${cart[item][1]}</span>
-      <button id="plus${item}" class="btn btn-primary plus">+</button>`
+      <button id="plus${item}" class="btn btn-success plus">+</button>`
     }
     localStorage.setItem('cart',JSON.stringify(cart));
     document.getElementById('cart').innerHTML = Object.keys(cart).length
@@ -190,6 +190,6 @@
       document.getElementById('valpr'+a).innerHTML = cart['pr'+a][1]
       updateCart(cart)
   });
-
 </script>
+
 {% endblock %}

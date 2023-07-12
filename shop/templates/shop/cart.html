@@ -31,6 +31,7 @@
     </div>
     <div class="totalDesign">
         <a id="checkout" href="/checkout" type="button" class="btn btn-success">Check out</a>
+        <a id="clearCart" href="/" type="button" class="btn btn-danger">Clear Cart</a>
         <div id="subtotal" class="float-right">
     
         </div>
@@ -42,6 +43,7 @@
 <script>
         if (localStorage.getItem('cart')==null) {
             var cart = {}
+            
         } else {
             cart = JSON.parse(localStorage.getItem('cart'))
         }
@@ -69,6 +71,11 @@
 
         document.getElementById('cart').innerHTML = Object.keys(cart).length
         document.getElementById('subtotal').innerText = 'Subtotal Price : '+  subTotal
+        
+        $('#clearCart').on('click',()=>{
+            localStorage.clear()
+            cart = {}
+        })
  
 
 </script>
