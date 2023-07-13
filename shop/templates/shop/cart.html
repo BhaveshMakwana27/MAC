@@ -43,10 +43,16 @@
 <script>
         if (localStorage.getItem('cart')==null) {
             var cart = {}
-            
         } else {
             cart = JSON.parse(localStorage.getItem('cart'))
         }
+
+        function deleteItem(itemId){
+            delete cart[itemId]
+            localStorage.setItem('cart',JSON.stringify(cart))
+            window.location.href = '/cart'
+        }
+
         let itemList = document.getElementById('itemList')
         var sum = 0
         let subTotal = 0
@@ -64,13 +70,21 @@
                                                             <span class='right-element'>Quantity : ${qty}</span>
                                                             <span class="card-text right-element d-flex"> Total Price : ${productTotalPrice}</span>
                                                             <a href="/productview/${id}" class="btn btn-primary">View Product</a>
+                                                            <button onclick='deleteItem("pr${id}")' class='btn btn-danger'>Delete</button>
                                                         </div>
                                                         </div>`
 
         }
 
         document.getElementById('cart').innerHTML = Object.keys(cart).length
-        document.getElementById('subtotal').innerText = 'Subtotal Price : '+  subTotal
+        if (subTotal==0) {
+            document.body.innerHTML =  `<h2>Your Cart Is Empty</h2>`
+            setTimeout(()=>{
+                window.location.href = '/'
+            },1000)
+        }else{
+            document.getElementById('subtotal').innerText = 'Subtotal Price : '+  subTotal
+        }
         
         $('#clearCart').on('click',()=>{
             localStorage.clear()

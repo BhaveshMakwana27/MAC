@@ -144,15 +144,13 @@
       popStr = popStr + document.getElementById('name'+item).innerText.slice(0,20) + ".. Qty : " + cart[item][1] +'<br>' 
       i++
     }
-
     popStr = popStr + `</div>
                        <div>
-                          <a href="/cart" id="viewCart" type="button" class="btn btn-success">View</a>
+                          <a href='/cart' id="viewCart" type="button" class="btn btn-success">View</a>
                       </div>`
     
     document.getElementById('popcart').setAttribute('data-content',popStr)
     document.getElementById('popcart').setAttribute('data-title','<h5>Your Cart</h5>')
-
     $('#popcart').popover('show')
   }
 
